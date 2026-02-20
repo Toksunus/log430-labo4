@@ -16,9 +16,15 @@ from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 app = Flask(__name__)
 
 def generate_reports_and_cache():
-    threading.Timer(2.0, get_report_highest_spending_users, args=(True,)).start()
-    threading.Timer(2.0, get_report_best_selling_products, args=(True,)).start()
-    threading.Timer(60.0, generate_reports_and_cache).start()
+    t1 = threading.Timer(2.0, get_report_highest_spending_users, args=(True,))
+    t2 = threading.Timer(2.0, get_report_best_selling_products, args=(True,))
+    t3 = threading.Timer(60.0, generate_reports_and_cache)
+    t1.daemon = True
+    t2.daemon = True
+    t3.daemon = True
+    t1.start()
+    t2.start()
+    t3.start()
 
 generate_reports_and_cache()
 
